@@ -93,7 +93,10 @@ export default function Example() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/getDisplayProducts", { params, headers })
+      .get("https://eplaza-backend.onrender.com/getDisplayProducts", {
+        params,
+        headers,
+      })
       .then((res) => {
         //console.log(res.data);
         setProducts(res.data);
@@ -108,7 +111,7 @@ export default function Example() {
   const searchProducts = async (data) => {
     params["search_key"] = data;
     const results = await axios
-      .get("http://localhost:5000/getSearchResults", {
+      .get("https://eplaza-backend.onrender.com/getSearchResults", {
         params,
         headers,
       })
@@ -120,7 +123,10 @@ export default function Example() {
     //console.log(e.target.getAttribute("sortkey"));
     params.sortKey = e.target.getAttribute("sortkey");
     await axios
-      .get("http://localhost:5000/getSortedProducts", { params, headers })
+      .get("https://eplaza-backend.onrender.com/getSortedProducts", {
+        params,
+        headers,
+      })
       .then((res) => {
         //console.log(res.data);
         setProducts(res.data);

@@ -14,7 +14,7 @@ export default function Products(props) {
     params["product_id"] =
       e.target.parentElement.parentElement.getAttribute("product_key");
     const result = await axios
-      .get("http://localhost:5000/getProduct", {
+      .get("https://eplaza-backend.onrender.com/getProduct", {
         params,
         headers,
       })

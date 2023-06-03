@@ -42,7 +42,7 @@ export default function Example() {
     // data["admin"] = admin;
     // //console.log(data);
     await axios
-      .post("http://localhost:5000/api/login", data)
+      .post("https://eplaza-backend.onrender.com/api/login", data)
       .then((res) => {
         // //console.log(res.data);
         localStorage.setItem(

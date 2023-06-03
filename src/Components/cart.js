@@ -19,7 +19,7 @@ export default function Cart() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/getCart", { params, headers })
+      .get("https://eplaza-backend.onrender.com/getCart", { params, headers })
       .then((res) => {
         setProducts(res.data);
       })
@@ -30,13 +30,16 @@ export default function Cart() {
     //console.log(e.currentTarget.getAttribute("cart_product_key"));
     params.product_key = e.currentTarget.getAttribute("cart_product_key");
     await axios
-      .delete("http://localhost:5000/deleteitem", { params, headers })
+      .delete("https://eplaza-backend.onrender.com/deleteitem", {
+        params,
+        headers,
+      })
       .then((res) => {
         setProducts(res.data);
       })
       .catch((err) => console.log(err));
     await axios
-      .get("http://localhost:5000/getCart", { params, headers })
+      .get("https://eplaza-backend.onrender.com/getCart", { params, headers })
       .then((res) => {
         setProducts(res.data);
       })

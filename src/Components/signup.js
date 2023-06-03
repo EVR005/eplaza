@@ -39,7 +39,7 @@ export default function Signup() {
   const signup_submit = async (data) => {
     // //console.log(data);
     await axios
-      .post("http://localhost:5000/api/signup", data)
+      .post("https://eplaza-backend.onrender.com/api/signup", data)
       .then((res) => {
         if (res.status == 200) {
           navigate("/");

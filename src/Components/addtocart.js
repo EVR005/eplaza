@@ -72,7 +72,7 @@ export default function AddToCart(props) {
     // params["product_key"] = props.details.id;
     await axios
       .post(
-        "http://localhost:5000/pushtocart",
+        "https://eplaza-backend.onrender.com/pushtocart",
         { product_key: props.details.id, req_quantity: quantity },
         { params, headers }
       )
