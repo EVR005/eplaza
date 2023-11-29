@@ -12,7 +12,7 @@
   }
   ```
 */
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useRef, useState } from "react";
 import { Dialog, RadioGroup, Transition } from "@headlessui/react";
 import {
   XMarkIcon,
@@ -67,9 +67,11 @@ export default function AddToCart(props) {
   //       ]
   //     : ""
   // );
+  const submitref = useRef(null);
 
   const addToCart = async () => {
     // params["product_key"] = props.details.id;
+    submitref.current.disabled = true;
     await axios
       .post(
         "https://eplaza-backend.onrender.com/pushtocart",
@@ -77,6 +79,7 @@ export default function AddToCart(props) {
         { params, headers }
       )
       .catch((err) => console.log(err));
+    submitref.current.disabled = false;
   };
 
   return (
@@ -387,6 +390,7 @@ export default function AddToCart(props) {
                             disabled={
                               props.details.quantity == 0 ? true : false
                             }
+                            ref={submitref}
                             onClick={addToCart}
                             className="mt-6 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                           >

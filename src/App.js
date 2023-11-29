@@ -4,6 +4,7 @@ import Login from "./Components/login.js";
 import Signup from "./Components/signup.js";
 import Shopping from "./Components/shopping";
 import Cart from "./Components/cart";
+import Otp from "./Components/otp";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/signup" element={<Signup />}></Route>
           <Route path="/shopping" element={<Shopping />}></Route>
           <Route path="/cart" element={<Cart />}></Route>
+          <Route path="/otp" element={<Otp />}></Route>
         </Routes>
       </Router>
     </div>

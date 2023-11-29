@@ -15,7 +15,7 @@
 import { useForm, useController, Controller } from "react-hook-form";
 import axios from "axios";
 import { Switch } from "@headlessui/react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 
 function classNames(...classes) {
@@ -35,12 +35,15 @@ export default function Example() {
   } = useForm();
 
   const [admin, setAdmin] = useState(false);
+  const submitref = useRef(null);
 
   const navigate = useNavigate();
 
   const login_submit = async (data) => {
+    localStorage.setItem("page", 0);
+    submitref.current.disabled = true;
     // data["admin"] = admin;
-    // //console.log(data);
+    console.log(data);
     await axios
       .post("https://eplaza-backend.onrender.com/api/login", data)
       .then((res) => {
@@ -50,12 +53,30 @@ export default function Example() {
           JSON.stringify(res.data.accessToken)
         );
         localStorage.setItem("player_id", JSON.stringify(res.data.id));
+        // const token = JSON.parse(localStorage.getItem("accesstoken"));
+        const headers = { Authorization: `Bearer ${res.data.accessToken}` };
+        let params = { id: res.data.id };
         if (res.status == 200) {
-          if (res.data.admin) navigate("/adminHome");
-          else navigate("/shopping");
+          localStorage.setItem("email", JSON.stringify(res.data.email));
+          console.log(res.data);
+          axios
+            .post("https://eplaza-backend.onrender.com/send-otp", data, {
+              params,
+              headers,
+            })
+            .then((res) => {
+              console.log("mail sent!");
+            })
+            .catch((err) => console.log(err));
+          submitref.current.disabled = false;
+          navigate("/otp");
+          // if (res.data.admin) navigate("/adminHome");
+          // else navigate("/shopping");
         }
       })
       .catch((err) => {
+        submitref.current.disabled = false;
+        console.log(err);
         setShowExistModal(true);
       });
   };
@@ -192,10 +213,11 @@ export default function Example() {
             <div>
               <button
                 type="submit"
+                ref={submitref}
                 onClick={handleSubmit(login_submit)}
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
-                Sign in
+                Send OTP
               </button>
             </div>
           </form>

@@ -12,7 +12,7 @@
   }
   ```
 */
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { Switch } from "@headlessui/react";
 import { useForm, useController, Controller } from "react-hook-form";
@@ -25,6 +25,8 @@ function classNames(...classes) {
 
 export default function Signup() {
   const [showExistModal, setShowExistModal] = useState(false);
+  const [showDataInvalidModal, setShowDataInvalidModal] = useState(false);
+
   const {
     register,
     formState: { errors: errors1 },
@@ -35,19 +37,40 @@ export default function Signup() {
   } = useForm();
 
   const navigate = useNavigate();
+  const submitref = useRef(null);
 
   const signup_submit = async (data) => {
     // //console.log(data);
+    localStorage.setItem("page", 1);
+    submitref.current.disabled = true;
     await axios
       .post("https://eplaza-backend.onrender.com/api/signup", data)
       .then((res) => {
         if (res.status == 200) {
-          navigate("/");
+          localStorage.setItem("player_id", JSON.stringify(res.data.id));
+          localStorage.setItem("email", JSON.stringify(res.data.email));
+          let params = { id: res.data.id };
+          console.log(params);
+          axios
+            .post("https://eplaza-backend.onrender.com/signup-otp", data, {
+              params,
+            })
+            .then((res) => {
+              console.log("mail sent!");
+            })
+            .catch((err) => console.log(err));
+          submitref.current.disabled = false;
+          navigate("/otp");
         }
       })
       .catch((err) => {
+        console.log(err);
+        submitref.current.disabled = false;
         if (err.response.status == 413) {
           setShowExistModal(true);
+        } else if (err.response.status == 400) {
+          submitref.current.disabled = false;
+          setShowDataInvalidModal(true);
         }
       });
   };
@@ -56,6 +79,10 @@ export default function Signup() {
 
   const TryAgain = () => {
     setShowExistModal(false);
+  };
+
+  const TryAgain1 = () => {
+    setShowDataInvalidModal(false);
   };
 
   return (
@@ -83,6 +110,39 @@ export default function Signup() {
                     className="bg-red-500 text-white active:bg-red-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                     type="button"
                     onClick={TryAgain}
+                  >
+                    Okay
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+        </>
+      ) : null}
+      {showDataInvalidModal ? (
+        <>
+          <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
+            <div className="relative w-8/12 my-6 mx-auto max-w-3xl">
+              {/*content*/}
+              <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+                {/*header*/}
+                <div className="flex items-start justify-between p-5 border-b border-solid border-slate-200 rounded-t">
+                  <h3 className="text-2xl justify-center align-center font-semibold">
+                    Note!
+                  </h3>
+                </div>
+                {/*body*/}
+                <div className="text-3xl leading-none font-semibold">
+                  {" "}
+                  Your Username and Password should be of minimum 5 characters!
+                </div>
+                {/*footer*/}
+                <div className="flex items-center justify-end p-6 border-t border-solid border-slate-200 rounded-b">
+                  <button
+                    className="bg-red-500 text-white active:bg-red-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                    type="button"
+                    onClick={TryAgain1}
                   >
                     Okay
                   </button>
@@ -230,7 +290,7 @@ export default function Signup() {
                 name="phone"
                 id="phone"
                 // autoComplete="tel"
-                className="block w-full rounded-md border-0 px-3.5 py-2 pl-20 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
             </div>
           </div>
@@ -255,6 +315,7 @@ export default function Signup() {
         <div className="mt-10">
           <button
             type="submit"
+            ref={submitref}
             onClick={handleSubmit(signup_submit)}
             className="block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
@@ -262,6 +323,16 @@ export default function Signup() {
           </button>
         </div>
       </form>
+      <p className="mt-10 text-center text-sm text-slate-300">
+        Back to Login?{" "}
+        <Link
+          to="/"
+          href="#"
+          className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+        >
+          Click Here!
+        </Link>
+      </p>
     </div>
   );
 }

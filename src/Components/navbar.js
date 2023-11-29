@@ -61,6 +61,7 @@ export default function NavBar() {
                   </div>
                 </div>
               </div>
+
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                 <Link
                   to="/cart"
@@ -71,7 +72,12 @@ export default function NavBar() {
 
                   <ShoppingCartIcon className="h-6 w-6" />
                 </Link>
-
+                <div
+                  style={{ display: "inline" }}
+                  className="w-5 h-5 text-xs bg-red-500 rounded-full flex justify-center items-center"
+                >
+                  <span className="text-white text-xs">1</span>
+                </div>
                 {/* Profile dropdown */}
                 <button onClick={logout}>
                   <ArrowRightOnRectangleIcon class="h-6 w-6 text-gray-400 ml-5" />
